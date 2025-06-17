@@ -6,8 +6,27 @@ import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { Button } from 'primereact/button';
 import NavBar from "./NavBar";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Header() {
+
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const handleSearch = () => {
+    navigate(`/products?filter=${searchValue.trim()}`)
+  }
+
+  useEffect(()=>{
+    if (!location.pathname.includes('/products') || !searchParams.get('filter')) {
+      setSearchValue("");
+    }
+  },[location.pathname, searchParams])
+  
+
   return (
     <header className="w-full px-4 py-6 md:px-[100px] md:py-11 flex flex-col gap-4 md:gap-8 bg-[#FFFFFF]">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
@@ -17,10 +36,13 @@ function Header() {
         </div>
 
         <IconField className="w-full md:w-[38vw]">
-          <InputIcon className="pi pi-search"  style={{cursor: "pointer"}}/>
+          <InputIcon className="pi pi-search" onClick={handleSearch}  style={{cursor: "pointer"}}/>
           <InputText 
             placeholder="Pesquisar produto..." 
             className="w-full"
+            onChange={(e)=> setSearchValue(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            value={searchValue}
             style={{backgroundColor: "#F8F8F8"}}
           />
         </IconField>

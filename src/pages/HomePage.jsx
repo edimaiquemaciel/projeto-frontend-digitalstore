@@ -1,144 +1,69 @@
 import Gallery from "../components/Gallery";
 import Section from "../components/Section";
 import ProductListing from "../components/ProductListing";
+import { useEffect, useState } from "react";
 
 function HomePage() {
-  const images = [
-    {
-      image: "/White-Sneakers2.png",
-      alt: 'Nike Air',
-      title: 'Queima de estoque Nike 🔥',
-      subtitle: 'Melhores ofertas personalizadas',
-      description:
-        'Consequat culpa exercitation mollit nisi exceptetur do do tempor laboris eiusmod inure consectetur.',
-      buttonLabel: 'Ver Ofertas',
-    },
-    {
-      image: "/home-slide-1.jpeg",
-    },
-    {
-      image: "/home-slide-2.jpeg",
-    },
-    {
-      image: "/home-slide-3.jpeg",
-    },
-    {
-      image: "/home-slide-4.jpeg",
-    },
-    {
-      image: "/home-slide-5.jpeg",
-    },
-    {
-      image: "/home-slide-6.jpeg",
-    },
-    {
-      image: "/home-slide-7.jpeg",
-    },
-    {
-      image: "/home-slide-8.jpeg",
-    },
-  ];
 
-  const imageCollection = [
-    {
-      src: "/collection-1.png"
-    },
-    {
-      src: "/collection-2.png"
-    },
-    {
-      src: "/collection-3.png"
-    }
-  ]
-  const imageCollection2 = [
-    {
-      src: "/camisetas.png",
-      text: "Camisetas"
-    },
-    {
-      src: "/calcas.png",
-      text: "Calças"
-    },
-    {
-      src: "/bone2.png",
-      text: "Bonés"
-    },
-    {
-      src: "/headphones.png",
-      text: "Headphones"
-    },
-    {
-      src: "/tenis.png",
-      text: "Tênis"
-    }
-  ]
+  const [products, setProducts] = useState([]);
+  const [images, setImages] = useState([]);
+  const [imagesCollection, setImagesCollection] = useState([]);
+  const [imagesCollection2, setImagesCollection2] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const products = [
-    {
-      id: 1,
-      name: "Air Jordan 1 High",
-      image: "/Layer1.png",
-      price: 3500,
-      priceDiscount: 1500,
-      category: "Tênis"
-    },
-    {
-      id: 2,
-      name: "Air Jordan 1 High",
-      image: "/Layer1.png",
-      price: 5000,
-      priceDiscount: 1800,
-      category: "Tênis"
-    },
-    {
-      id: 3,
-      name: "Tênis Levi's de Couro",
-      image: "/Layer1.png",
-      price: 550,
-      priceDiscount: 250,
-      category: "Tênis"
-    },
-    {
-      id: 4,
-      name: "Tênis Retro Runner",
-      image: "/Layer1.png",
-      price: 800,
-      priceDiscount: 350,
-      category: "Tênis"
-    },
-    {
-      id: 5,
-      name: "Nike SuperRep Go",
-      image: "/Layer1.png",
-      price: 750,
-      priceDiscount: 450,
-      category: "Tênis"
-    },
-    {
-      id: 6,
-      name: "Tênis Levi's de Couro",
-      image: "/Layer1.png",
-      price: 550,
-      priceDiscount: 250,
-      category: "Tênis"
-    },
-    {
-      id: 7,
-      name: "Tênis Retro Runner",
-      image: "/Layer1.png",
-      price: 800,
-      priceDiscount: 350,
-      category: "Tênis"
-    },
-    {
-      id: 8,
-      name: "Nike SuperRep Go",
-      image: "/Layer1.png",
-      price: 750,
-      priceDiscount: 450,
-      category: "Tênis"
-    },
-];
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setLoading(true);
+
+        const productsRes = await fetch("http://localhost:3000/allProducts");
+        if (!productsRes.ok) {
+          throw new Error(`HTTP error! status: ${productsRes.status}`);
+        }
+        const productsData = await productsRes.json();
+        setProducts(productsData.slice(0,-1));
+
+        const imagesRes = await fetch("http://localhost:3000/imagesSlideHome");
+        if (!imagesRes.ok) {
+          throw new Error(`HTTP error! status: ${imagesRes.status}`);
+        }
+        const imagesData = await imagesRes.json();
+        setImages(imagesData);
+
+        const imagesCollection = await fetch("http://localhost:3000/imageCollection");
+        if (!imagesCollection.ok) {
+          throw new Error(`HTTP error! status: ${imagesCollection.status}`);
+        }
+        const imagesCollectionData = await imagesCollection.json();
+        setImagesCollection(imagesCollectionData);
+
+        const imagesCollection2 = await fetch("http://localhost:3000/imageCollection2");
+        if (!imagesCollection2.ok) {
+          throw new Error(`HTTP error! status: ${imagesCollection2.status}`);
+        }
+        const imagesCollectionData2 = await imagesCollection2.json();
+        setImagesCollection2(imagesCollectionData2);
+
+      } catch (err) {
+        console.error("Erro ao buscar dados:", err);
+        setError("Não foi possível carregar os dados.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
+  if (loading) {
+    return <div>Carregando dados...</div>;
+  }
+
+  if (error) {
+    return <div>Erro: {error}</div>;
+  }
+  
 
   
   return (
@@ -152,15 +77,15 @@ function HomePage() {
       />
       <Section title="Coleções em destaque" className="w-full flex flex-col items-start justify-between gap-5 px-[110px] pt-9 mb-30">
         <div className="w-full flex items-center justify-between">
-          {imageCollection.map(image => (
-            <img className="w-[calc(33%-6px)] rounded-lg" src={image.src} alt="" />
+          {imagesCollection.map((image, index) => (
+            <img key={index} className="w-[calc(33%-6px)] rounded-lg" src={image.src} alt="" />
           ))}
         </div>
       </Section>
       <Section title="Coleções em destaque" titleAlign="center" className="flex flex-col items-center justify-between gap-6 mb-30">
         <div className="w-[100%] flex items-center justify-center gap-11">
-          {imageCollection2.map(image => (
-            <div className="flex flex-col items-center justify-center gap-2">
+          {imagesCollection2.map((image, index) => (
+            <div key={index} className="flex flex-col items-center justify-center gap-2">
               <div className="w-[100px] h-[100px] flex items-center justify-center rounded-[50%] bg-white">
                 <img className="w-[64px] h-[64px]" src={image.src} alt="" />
               </div>
