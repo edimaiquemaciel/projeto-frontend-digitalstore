@@ -17,28 +17,28 @@ function HomePage() {
       try {
         setLoading(true);
 
-        const productsRes = await fetch("http://localhost:3000/allProducts");
+        const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
         if (!productsRes.ok) {
           throw new Error(`HTTP error! status: ${productsRes.status}`);
         }
         const productsData = await productsRes.json();
         setProducts(productsData.slice(0,-1));
 
-        const imagesRes = await fetch("http://localhost:3000/imagesSlideHome");
+        const imagesRes = await fetch("https://digital-store-server-production.up.railway.app/imagesSlideHome");
         if (!imagesRes.ok) {
           throw new Error(`HTTP error! status: ${imagesRes.status}`);
         }
         const imagesData = await imagesRes.json();
         setImages(imagesData);
 
-        const imagesCollection = await fetch("http://localhost:3000/imageCollection");
+        const imagesCollection = await fetch("https://digital-store-server-production.up.railway.app/imageCollection");
         if (!imagesCollection.ok) {
           throw new Error(`HTTP error! status: ${imagesCollection.status}`);
         }
         const imagesCollectionData = await imagesCollection.json();
         setImagesCollection(imagesCollectionData);
 
-        const imagesCollection2 = await fetch("http://localhost:3000/imageCollection2");
+        const imagesCollection2 = await fetch("https://digital-store-server-production.up.railway.app//imageCollection2");
         if (!imagesCollection2.ok) {
           throw new Error(`HTTP error! status: ${imagesCollection2.status}`);
         }
@@ -63,6 +63,9 @@ function HomePage() {
   if (error) {
     return <div>Erro: {error}</div>;
   }
+
+  console.log(products);
+  
   
 
   
