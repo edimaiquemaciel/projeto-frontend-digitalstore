@@ -38,7 +38,7 @@ function HomePage() {
         const imagesCollectionData = await imagesCollection.json();
         setImagesCollection(imagesCollectionData);
 
-        const imagesCollection2 = await fetch("https://digital-store-server-production.up.railway.app//imageCollection2");
+        const imagesCollection2 = await fetch("https://digital-store-server-production.up.railway.app/imageCollection2");
         if (!imagesCollection2.ok) {
           throw new Error(`HTTP error! status: ${imagesCollection2.status}`);
         }
