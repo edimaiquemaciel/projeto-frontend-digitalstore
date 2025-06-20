@@ -61,7 +61,7 @@ function ProductListingPage() {
           try {
             setLoading(true);
     
-            const productsRes = await fetch("http://localhost:3000/allProducts");
+            const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
             if (!productsRes.ok) {
               throw new Error(`HTTP error! status: ${productsRes.status}`);
             }
