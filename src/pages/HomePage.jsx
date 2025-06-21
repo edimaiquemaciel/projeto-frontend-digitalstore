@@ -9,6 +9,7 @@ function HomePage() {
   const [images, setImages] = useState([]);
   const [imagesCollection, setImagesCollection] = useState([]);
   const [imagesCollection2, setImagesCollection2] = useState([]);
+  const [imageSpecial, setImageSpecial] = useState([])
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -45,6 +46,14 @@ function HomePage() {
         const imagesCollectionData2 = await imagesCollection2.json();
         setImagesCollection2(imagesCollectionData2);
 
+
+        const imagesSpecial = await fetch("https://digital-store-server-production.up.railway.app/imageSpecial");
+        if (!imagesSpecial.ok) {
+          throw new Error(`HTTP error! status: ${imagesSpecial.status}`);
+        }
+        const imagesSpecialData = await imagesSpecial.json();
+        setImageSpecial(imagesSpecialData);
+
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
         setError("Não foi possível carregar os dados.");
@@ -64,7 +73,7 @@ function HomePage() {
     return <div>Erro: {error}</div>;
   }
 
-  console.log(products);
+  console.log("especial",imageSpecial);
   
   
 
@@ -103,7 +112,7 @@ function HomePage() {
       <Section>
         <div className="w-full flex items-start justify-start gap-20 pl-16 py-28 bg-white mt-32">
           <div className="relative">
-            <img className="w-full z-40 relative" src="/Laye.png" alt="Tenis" />
+            <img className="w-full z-40 relative" src={imageSpecial[0].image} alt="Tenis" />
             <div className="w-[459px] h-[280px] absolute top-[107px] left-[305px] -translate-x-1/2 -translate-y-1/2 rounded-tl-[250px] rounded-tr-[250px] bg-gradient-to-b from-[rgba(66,0,255,0.1)] to-[rgba(255,255,255,0)]"></div>
           </div>
           <div className="flex flex-1 flex-col items-start justify-between gap-5 max-w-[38%]" >
