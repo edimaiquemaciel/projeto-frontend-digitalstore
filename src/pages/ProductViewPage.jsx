@@ -19,40 +19,51 @@ function ProductViewPage() {
     const {id} = useParams();
 
     useEffect(() => {
+      let isMounted = true;
+      let retryCount = 0;
+      const maxRetries = 3;
+      const retryDelay = 1000;
+
       const fetchAllData = async () => {
         try {
           setLoading(true);
-  
+          setError(null);
+
           const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
-          if (!productsRes.ok) {
-            throw new Error(`HTTP error! status: ${productsRes.status}`);
-          }
+          if (!productsRes.ok) throw new Error(`HTTP error! status: ${productsRes.status}`);
           const productsData = await productsRes.json();
-          setProductsHigh(productsData.slice(0,-5));
+          if (isMounted) setProductsHigh(productsData.slice(0, -5));
 
           const productsDetails = await fetch("https://digital-store-server-production.up.railway.app/allProductsDetails");
-          if (!productsDetails.ok) {
-            throw new Error(`HTTP error! status: ${productsDetails.status}`);
-          }
+          if (!productsDetails.ok) throw new Error(`HTTP error! status: ${productsDetails.status}`);
           const productsDetailsData = await productsDetails.json();
-          setProductDetails(productsDetailsData);
-  
+          if (isMounted) setProductDetails(productsDetailsData);
+
           const imagesRes = await fetch("https://digital-store-server-production.up.railway.app/imagesWithThumb");
-          if (!imagesRes.ok) {
-            throw new Error(`HTTP error! status: ${imagesRes.status}`);
-          }
+          if (!imagesRes.ok) throw new Error(`HTTP error! status: ${imagesRes.status}`);
           const imagesData = await imagesRes.json();
-          setImagesWithThumb(imagesData);
-  
+          if (isMounted) setImagesWithThumb(imagesData);
+
         } catch (err) {
           console.error("Erro ao buscar dados:", err);
-          setError("Não foi possível carregar os dados.");
+          
+          if (isMounted && retryCount < maxRetries) {
+            retryCount++;
+            setError(`Tentativa ${retryCount} de ${maxRetries}. Tentando novamente...`);
+            setTimeout(fetchAllData, retryDelay);
+          } else if (isMounted) {
+            setError("Não foi possível carregar os dados após várias tentativas.");
+          }
         } finally {
-          setLoading(false);
+          if (isMounted) setLoading(false);
         }
       };
-  
+
       fetchAllData();
+
+      return () => {
+        isMounted = false;
+      };
     }, []);
 
     if (loading) {

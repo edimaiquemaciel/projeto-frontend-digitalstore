@@ -14,55 +14,61 @@ function HomePage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchAllData = async () => {
+  let isMounted = true;
+  let retryCount = 0;
+  const maxRetries = 3;
+  const retryDelay = 1000;
+
+  const fetchAllData = async () => {
       try {
         setLoading(true);
+        setError(null);
 
         const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
-        if (!productsRes.ok) {
-          throw new Error(`HTTP error! status: ${productsRes.status}`);
-        }
+        if (!productsRes.ok) throw new Error(`HTTP error! status: ${productsRes.status}`);
         const productsData = await productsRes.json();
-        setProducts(productsData.slice(0,-1));
+        if (isMounted) setProducts(productsData.slice(0, -1));
 
         const imagesRes = await fetch("https://digital-store-server-production.up.railway.app/imagesSlideHome");
-        if (!imagesRes.ok) {
-          throw new Error(`HTTP error! status: ${imagesRes.status}`);
-        }
+        if (!imagesRes.ok) throw new Error(`HTTP error! status: ${imagesRes.status}`);
         const imagesData = await imagesRes.json();
-        setImages(imagesData);
+        if (isMounted) setImages(imagesData);
 
         const imagesCollection = await fetch("https://digital-store-server-production.up.railway.app/imageCollection");
-        if (!imagesCollection.ok) {
-          throw new Error(`HTTP error! status: ${imagesCollection.status}`);
-        }
+        if (!imagesCollection.ok) throw new Error(`HTTP error! status: ${imagesCollection.status}`);
         const imagesCollectionData = await imagesCollection.json();
-        setImagesCollection(imagesCollectionData);
+        if (isMounted) setImagesCollection(imagesCollectionData);
 
         const imagesCollection2 = await fetch("https://digital-store-server-production.up.railway.app/imageCollection2");
-        if (!imagesCollection2.ok) {
-          throw new Error(`HTTP error! status: ${imagesCollection2.status}`);
-        }
+        if (!imagesCollection2.ok) throw new Error(`HTTP error! status: ${imagesCollection2.status}`);
         const imagesCollectionData2 = await imagesCollection2.json();
-        setImagesCollection2(imagesCollectionData2);
-
+        if (isMounted) setImagesCollection2(imagesCollectionData2);
 
         const imagesSpecial = await fetch("https://digital-store-server-production.up.railway.app/imageSpecial");
-        if (!imagesSpecial.ok) {
-          throw new Error(`HTTP error! status: ${imagesSpecial.status}`);
-        }
+        if (!imagesSpecial.ok) throw new Error(`HTTP error! status: ${imagesSpecial.status}`);
         const imagesSpecialData = await imagesSpecial.json();
-        setImageSpecial(imagesSpecialData);
+        if (isMounted) setImageSpecial(imagesSpecialData);
 
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
-        setError("Não foi possível carregar os dados.");
+        
+        if (isMounted && retryCount < maxRetries) {
+          retryCount++;
+          setError(`Tentando novamente... (${retryCount}/${maxRetries})`);
+          setTimeout(fetchAllData, retryDelay);
+        } else if (isMounted) {
+          setError("Não foi possível carregar os dados após várias tentativas.");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchAllData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (loading) {
@@ -72,11 +78,6 @@ function HomePage() {
   if (error) {
     return <div>Erro: {error}</div>;
   }
-
-  console.log("especial",imageSpecial);
-  
-  
-
   
   return (
     <div className="bg-[#F9F8FE]">
