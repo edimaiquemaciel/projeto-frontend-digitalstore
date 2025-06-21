@@ -5,7 +5,7 @@ import ScrollToTop from "../components/ScrollToTop";
 
 function Layout() {
   return (
-    <div> 
+    <div className="bg-[#F9F8FE]"> 
         <ScrollToTop />
         <Header />
         <Outlet />

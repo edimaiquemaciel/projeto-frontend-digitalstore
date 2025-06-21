@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 
 
 function ProductViewPage() {
-    const [products, setProducts] = useState([]);
     const [imagesWithThumb, setImagesWithThumb] = useState([]);
     const [productsHigh, setProductsHigh] = useState([]);
+    const [productDetails, setProductDetails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const sizes = [39, 40, 41, 42, 43];
@@ -28,8 +28,14 @@ function ProductViewPage() {
             throw new Error(`HTTP error! status: ${productsRes.status}`);
           }
           const productsData = await productsRes.json();
-          setProducts(productsData);
           setProductsHigh(productsData.slice(0,-5));
+
+          const productsDetails = await fetch("https://digital-store-server-production.up.railway.app/allProductsDetails");
+          if (!productsDetails.ok) {
+            throw new Error(`HTTP error! status: ${productsDetails.status}`);
+          }
+          const productsDetailsData = await productsDetails.json();
+          setProductDetails(productsDetailsData);
   
           const imagesRes = await fetch("https://digital-store-server-production.up.railway.app/imagesWithThumb");
           if (!imagesRes.ok) {
@@ -57,11 +63,12 @@ function ProductViewPage() {
       return <div>Erro: {error}</div>;
     }
 
-    const product = products.find(p => p.id === parseInt(id));
+    const product = productDetails.find(p => p.id === parseInt(id));
 
 
   return (
     <div className="px-[100px] mb-48 flex flex-col">
+      <h1 className="my-6"><span className="font-bold">Home</span> / Produtos / Tênis / Nike / {product.name} </h1>
         <section className="flex items-start gap-[43.27px] mb-56">
           <Gallery 
           showThumbs={true} 
