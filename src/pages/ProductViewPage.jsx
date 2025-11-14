@@ -6,6 +6,8 @@ import BuyBox from "../components/BuyBox";
 import ProductListing from "../components/ProductListing";
 import { useEffect, useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 
 function ProductViewPage() {
     const [imagesWithThumb, setImagesWithThumb] = useState([]);
@@ -29,17 +31,17 @@ function ProductViewPage() {
           setLoading(true);
           setError(null);
 
-          const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
+          const productsRes = await fetch(`${API}/allProducts`);
           if (!productsRes.ok) throw new Error(`HTTP error! status: ${productsRes.status}`);
           const productsData = await productsRes.json();
           if (isMounted) setProductsHigh(productsData.slice(0, -5));
 
-          const productsDetails = await fetch("https://digital-store-server-production.up.railway.app/allProductsDetails");
+          const productsDetails = await fetch(`${API}/allProductsDetails`);
           if (!productsDetails.ok) throw new Error(`HTTP error! status: ${productsDetails.status}`);
           const productsDetailsData = await productsDetails.json();
           if (isMounted) setProductDetails(productsDetailsData);
 
-          const imagesRes = await fetch("https://digital-store-server-production.up.railway.app/imagesWithThumb");
+          const imagesRes = await fetch(`${API}/imagesWithThumb`);
           if (!imagesRes.ok) throw new Error(`HTTP error! status: ${imagesRes.status}`);
           const imagesData = await imagesRes.json();
           if (isMounted) setImagesWithThumb(imagesData);

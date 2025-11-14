@@ -6,6 +6,8 @@ import Section from '../components/Section';
 import ProductListing from '../components/ProductListing';
 import { useSearchParams} from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_URL;
+
 function ProductListingPage() {
     const [searchParams] = useSearchParams();
     const [products, setProducts] = useState([]);
@@ -61,7 +63,7 @@ function ProductListingPage() {
           try {
             setLoading(true);
     
-            const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
+            const productsRes = await fetch(`${API}/allProducts`);
             if (!productsRes.ok) {
               throw new Error(`HTTP error! status: ${productsRes.status}`);
             }

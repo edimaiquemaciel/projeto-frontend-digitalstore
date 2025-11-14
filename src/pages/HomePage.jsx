@@ -3,6 +3,8 @@ import Section from "../components/Section";
 import ProductListing from "../components/ProductListing";
 import { useEffect, useState } from "react";
 
+const API = import.meta.env.VITE_API_URL;
+
 function HomePage() {
 
   const [products, setProducts] = useState([]);
@@ -24,27 +26,27 @@ function HomePage() {
         setLoading(true);
         setError(null);
 
-        const productsRes = await fetch("https://digital-store-server-production.up.railway.app/allProducts");
+        const productsRes = await fetch(`${API}/allProducts`);
         if (!productsRes.ok) throw new Error(`HTTP error! status: ${productsRes.status}`);
         const productsData = await productsRes.json();
         if (isMounted) setProducts(productsData.slice(0, -1));
 
-        const imagesRes = await fetch("https://digital-store-server-production.up.railway.app/imagesSlideHome");
+        const imagesRes = await fetch(`${API}/imagesSlideHome`);
         if (!imagesRes.ok) throw new Error(`HTTP error! status: ${imagesRes.status}`);
         const imagesData = await imagesRes.json();
         if (isMounted) setImages(imagesData);
 
-        const imagesCollection = await fetch("https://digital-store-server-production.up.railway.app/imageCollection");
+        const imagesCollection = await fetch(`${API}/imageCollection`);
         if (!imagesCollection.ok) throw new Error(`HTTP error! status: ${imagesCollection.status}`);
         const imagesCollectionData = await imagesCollection.json();
         if (isMounted) setImagesCollection(imagesCollectionData);
 
-        const imagesCollection2 = await fetch("https://digital-store-server-production.up.railway.app/imageCollection2");
+        const imagesCollection2 = await fetch(`${API}/imageCollection2`);
         if (!imagesCollection2.ok) throw new Error(`HTTP error! status: ${imagesCollection2.status}`);
         const imagesCollectionData2 = await imagesCollection2.json();
         if (isMounted) setImagesCollection2(imagesCollectionData2);
 
-        const imagesSpecial = await fetch("https://digital-store-server-production.up.railway.app/imageSpecial");
+        const imagesSpecial = await fetch(`${API}/imageSpecial`);
         if (!imagesSpecial.ok) throw new Error(`HTTP error! status: ${imagesSpecial.status}`);
         const imagesSpecialData = await imagesSpecial.json();
         if (isMounted) setImageSpecial(imagesSpecialData);
